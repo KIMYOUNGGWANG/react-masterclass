@@ -5,6 +5,8 @@ import axios from "axios";
 import { useQuery } from "react-query";
 import { getCoinsInfo } from "../api";
 import { Helmet } from "react-helmet";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
 const Container = styled.div`
   padding: 0 20px;
   max-width: 480px;
@@ -21,8 +23,9 @@ const Header = styled.header`
 const CoinList = styled.ul``;
 
 const Coin = styled.li`
-  background-color: white;
-  color: ${(props) => props.theme.bgColor};
+  background-color: ${(props) => props.theme.bgColor};
+  color: ${(props) => props.theme.textColor};
+  border: 1px solid ${(props) => props.theme.textColor};
   border-radius: 15px;
   margin-bottom: 10px;
   a {
@@ -64,7 +67,12 @@ interface CoinInterface {
 }
 
 const Coins = () => {
-  const {isLoading, data }=useQuery<CoinInterface[]>("allCoins", getCoinsInfo);
+  const { isLoading, data } = useQuery<CoinInterface[]>(
+    "allCoins",
+    getCoinsInfo
+  );
+  const setDarkAtom = useSetRecoilState(isDarkAtom);
+  const toggleDarkMode = () => setDarkAtom((prev) => !prev);
   // const [coins, setCoins] = useState<CoinInterface[]>([]);
   // const [loading, setLoading] = useState<boolean>(true);
   // const getCoinInfo = async () => {
@@ -80,12 +88,13 @@ const Coins = () => {
       <Helmet>Coins</Helmet>
       <Header>
         <Title>Coins</Title>
+        <button onClick={toggleDarkMode}>DarkMode</button>
       </Header>
       {isLoading ? (
         <Loader>loading...</Loader>
       ) : (
         <CoinList>
-          {data?.slice(0,100).map((coin: CoinInterface) => (
+          {data?.slice(0, 100).map((coin: CoinInterface) => (
             <Coin key={coin.id}>
               <Link
                 to={{

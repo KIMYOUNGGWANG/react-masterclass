@@ -1,6 +1,13 @@
 import React, { useState } from "react";
-import styled, { createGlobalStyle, keyframes } from "styled-components";
-import Router from "./Router";
+import { useRecoilValue } from "recoil";
+import styled, {
+  createGlobalStyle,
+  keyframes,
+  ThemeProvider,
+} from "styled-components";
+import { isDarkAtom } from "./1.CoinTracker/atoms";
+import Router from "./1.CoinTracker/Router";
+import { darkTheme, lightTheme } from "./theme";
 
 const GlobalStyle = createGlobalStyle`
       @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap");
@@ -53,8 +60,8 @@ table {
 }
 body{
   font-family: "Source Sans Pro",sans-serif;
-  background-color: ${props=>props.theme.bgColor};
-  color : ${props=>props.theme.textColor};
+  background-color: ${(props) => props.theme.bgColor};
+  color : ${(props) => props.theme.textColor};
 }
 a{
   text-decoration: none;
@@ -63,32 +70,16 @@ a{
 * {
   box-sizing: border-box;
 }
-`
-// import Circle from "./Circle"
-
-// const Container = styled.div`
-//   background-color: ${props=>props.theme.bgColor};
-// `
-// const H1 = styled.h1`
-//   color : ${props=>props.theme.textColor};
-// `
+`;
 
 function App() {
-//   const [value, setValue] = useState("");
-//   const onChange = (e:React.FormEvent<HTMLInputElement>) => {
-//     const {currentTarget:{value},} = e;
-//     setValue(value)
-//   }
-
-//   const onSubmit = (e:React.FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     console.log("hello",value)
-//     setValue("")
-//   }
+  const isDark = useRecoilValue(isDarkAtom);
   return (
     <>
-    <GlobalStyle/>
-    <Router/>
+      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+        <GlobalStyle />
+        <Router />
+      </ThemeProvider>
     </>
     // <div className="App">
     //   {/* <form onSubmit={onSubmit}>
