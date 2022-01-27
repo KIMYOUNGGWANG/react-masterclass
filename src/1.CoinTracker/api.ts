@@ -23,7 +23,7 @@ export const getCoinPriceInfo = async (coinId: string) => {
 
 export const getCoinHistory = async (coinId: string) => {
   const endDate = Math.floor(Date.now() / 1000);
-  const startDate = endDate - 60 * 60 * 24 * 13;
+  const startDate = endDate - 60 * 60 * 24 * 14;
   const result = await axios.get(
     `https://api.coinpaprika.com/v1/coins/${coinId}/ohlcv/historical?start=${startDate}&end=${endDate}`
   );

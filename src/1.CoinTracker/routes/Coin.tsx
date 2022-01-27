@@ -5,6 +5,7 @@ import {
   Link,
   Route,
   Switch,
+  useHistory,
   useLocation,
   useParams,
   useRouteMatch,
@@ -27,6 +28,16 @@ const Header = styled.header`
   display: flex;
   justify-content: center;
   align-items: center;
+  button {
+    position: absolute;
+    left: 0;
+    width: 100px;
+    height: 30px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    background-color: #d3dedc;
+  }
 `;
 
 const Overview = styled.div`
@@ -145,6 +156,7 @@ interface CoinPrice extends CoinInfo {
 const Coin: React.FC = () => {
   // const [loading, setLoading] = useState(true);
   const { coinId } = useParams<Params>();
+  const history = useHistory();
   const { state } = useLocation<RouteState>();
   const priceMatch = useRouteMatch("/:coinId/price");
   const chartMatch = useRouteMatch("/:coinId/chart");
@@ -187,6 +199,8 @@ const Coin: React.FC = () => {
         </title>
       </Helmet>
       <Header>
+        <button onClick={() => history.goBack()}>뒤로가기</button>
+
         <Title>
           {state?.name ? state.name : loading ? "Loading.." : infoData?.name}
         </Title>
@@ -230,7 +244,7 @@ const Coin: React.FC = () => {
           </Tabs>
           <Switch>
             <Route path={`/${coinId}/price`}>
-              <Price />
+              <Price coinId={coinId} />
             </Route>
             <Route path={`/${coinId}/chart`}>
               <Chart coinId={coinId} />
