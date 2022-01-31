@@ -7,6 +7,7 @@ import styled, {
 } from "styled-components";
 import { isDarkAtom } from "./1.CoinTracker/atoms";
 import Router from "./1.CoinTracker/Router";
+import TodoList from "./2.Todo/TodoList";
 import { darkTheme, lightTheme } from "./theme";
 
 const GlobalStyle = createGlobalStyle`
@@ -73,23 +74,11 @@ a{
 `;
 
 function App() {
-  const isDark = useRecoilValue(isDarkAtom);
   return (
     <>
-      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-        <GlobalStyle />
-        <Router />
-      </ThemeProvider>
+      <GlobalStyle />
+      <TodoList />
     </>
-    // <div className="App">
-    //   {/* <form onSubmit={onSubmit}>
-    //     <input value={value} onChange={onChange} type="text" placeholder="userName"/>
-    //     <button>Log in</button>
-    //   </form> */}
-    //   <Container>
-    //     <H1>Hello Tony</H1>
-    //   </Container>
-    // </div>
   );
 }
 
