@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled, {
   createGlobalStyle,
   keyframes,
@@ -7,9 +7,14 @@ import styled, {
 } from "styled-components";
 import { isDarkAtom } from "./1.CoinTracker/atoms";
 import Router from "./1.CoinTracker/Router";
-import TodoList from "./2.Todo/TodoList";
-import { darkTheme, lightTheme } from "./theme";
-
+import { darkTheme } from "./theme";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "react-beautiful-dnd";
+import { toDoState } from "./Trello/atom";
 const GlobalStyle = createGlobalStyle`
       @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap");
 html, body, div, span, applet, object, iframe,
@@ -62,7 +67,8 @@ table {
 body{
   font-family: "Source Sans Pro",sans-serif;
   background-color: ${(props) => props.theme.bgColor};
-  color : ${(props) => props.theme.textColor};
+  color : black;
+  /* color : ${(props) => props.theme.textColor}; */
 }
 a{
   text-decoration: none;
@@ -73,11 +79,78 @@ a{
 }
 `;
 
+const Wrapper = styled.div`
+  display: flex;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+
+const Boards = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+`;
+const Board = styled.div`
+  /* padding-top: 30px; */
+  padding: 20px 10px;
+  border-radius: 5px;
+  background-color: ${(props) => props.theme.borderColor};
+  min-height: 200px;
+`;
+const Card = styled.div`
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 5px 10px;
+  background-color: ${(props) => props.theme.cardColor};
+`;
+
 function App() {
+  const [toDos, setTodos] = useRecoilState(toDoState);
+  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+    if (!destination) return;
+    console.log(destination, source);
+    setTodos((prev) => {
+      const copy = [...prev];
+      copy.splice(source.index, 1);
+      copy.splice(destination?.index, 0, draggableId);
+      return copy;
+    });
+  };
   return (
     <>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Wrapper>
+          <Boards>
+            <Droppable droppableId="one">
+              {(arg) => (
+                <Board ref={arg.innerRef} {...arg.droppableProps}>
+                  {toDos.map((todo, idx) => {
+                    return (
+                      <Draggable key={todo} draggableId={todo} index={idx}>
+                        {(arg) => (
+                          <Card
+                            ref={arg.innerRef}
+                            {...arg.draggableProps}
+                            {...arg.dragHandleProps}
+                          >
+                            {todo}
+                          </Card>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                  {arg.placeholder}
+                </Board>
+              )}
+            </Droppable>
+          </Boards>
+        </Wrapper>
+      </DragDropContext>
       <GlobalStyle />
-      <TodoList />
     </>
   );
 }
